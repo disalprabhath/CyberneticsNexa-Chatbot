@@ -1,14 +1,25 @@
 <?php
 /**
  * Small reusable frontend markup components.
+ *
+ * @package CyberneticsNexa_Chatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Small, stateless helpers for pieces of frontend markup reused across the chatbot.
+ */
 class CNX_Component {
 
+	/**
+	 * Static, trusted inline SVG icon markup.
+	 *
+	 * @param string $name One of 'chat', 'close', 'arrow', 'wa'.
+	 * @return string SVG markup, or '' for an unknown name.
+	 */
 	public static function svg( $name ) {
 		$paths = array(
 			'chat'  => '<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>',
@@ -25,6 +36,13 @@ class CNX_Component {
 		return $open . $paths[ $name ] . '</svg>';
 	}
 
+	/**
+	 * Launcher icon markup for the current settings (logo, custom image, SVG or dot).
+	 *
+	 * @param array  $settings Settings array.
+	 * @param string $logo     Logo URL, used when the icon choice is 'logo'.
+	 * @return string HTML markup.
+	 */
 	public static function launcher_icon( $settings, $logo ) {
 		$icon = $settings['launcher_icon'];
 

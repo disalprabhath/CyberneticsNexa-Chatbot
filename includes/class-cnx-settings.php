@@ -1,22 +1,42 @@
 <?php
 /**
  * Settings: defaults, reading and sanitising the single `cnx_settings` option.
+ *
+ * @package CyberneticsNexa_Chatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Default values, persisted-option access, and sanitisation for CNX_OPTION.
+ */
 class CNX_Settings {
 
 	const MAX_REPLIES = 12;
 
+	/**
+	 * Cached, merged settings for the current request.
+	 *
+	 * @var array|null
+	 */
 	private static $settings = null;
 
+	/**
+	 * Allowed launcher positions.
+	 *
+	 * @return string[]
+	 */
 	public static function positions() {
 		return array( 'bottom-right', 'bottom-left', 'top-right', 'top-left' );
 	}
 
+	/**
+	 * Allowed launcher animations, keyed by value, with translated labels.
+	 *
+	 * @return string[]
+	 */
 	public static function animations() {
 		return array(
 			'pulse'  => __( 'Pulse ring (live)', 'cyberneticsnexa-chatbot' ),
@@ -28,21 +48,26 @@ class CNX_Settings {
 		);
 	}
 
+	/**
+	 * Default values for every setting.
+	 *
+	 * @return array
+	 */
 	public static function defaults() {
 		return array(
-			'enabled'           => 1,
+			'enabled'             => 1,
 
 			// Content.
-			'logo_id'           => 0,
-			'logo_url'          => '',
-			'bot_title'         => 'CyberneticsNexa Assistant',
-			'bot_slogan'        => 'Usually replies in a few seconds',
-			'hello_message'     => 'Hello. I can help with pricing ranges, the roles we staff, how our governance works or booking a call. What would you like to start with?',
-			'input_placeholder' => 'Type your question',
-			'fallback_message'  => "Thanks for your message. I'm not sure I have the answer to that yet. Pick one of the options above, or talk to a live person.",
+			'logo_id'             => 0,
+			'logo_url'            => '',
+			'bot_title'           => 'CyberneticsNexa Assistant',
+			'bot_slogan'          => 'Usually replies in a few seconds',
+			'hello_message'       => 'Hello. I can help with pricing ranges, the roles we staff, how our governance works or booking a call. What would you like to start with?',
+			'input_placeholder'   => 'Type your question',
+			'fallback_message'    => "Thanks for your message. I'm not sure I have the answer to that yet. Pick one of the options above, or talk to a live person.",
 
 			// Quick replies (message title + message content).
-			'replies'           => array(
+			'replies'             => array(
 				array(
 					'title'    => 'Pricing',
 					'type'     => 'reply',
@@ -81,44 +106,46 @@ class CNX_Settings {
 			),
 
 			// WhatsApp live person.
-			'whatsapp_enabled'  => 1,
-			'whatsapp_number'   => '',
-			'whatsapp_label'    => 'Talk to a live person',
-			'whatsapp_message'  => 'Hello, I would like to talk to someone.',
-			'whatsapp_reply'    => "Connecting you to a live person on WhatsApp. If it doesn't open automatically, tap the button below.",
-			'whatsapp_button'   => 'Open WhatsApp',
+			'whatsapp_enabled'    => 1,
+			'whatsapp_number'     => '',
+			'whatsapp_label'      => 'Talk to a live person',
+			'whatsapp_message'    => 'Hello, I would like to talk to someone.',
+			'whatsapp_reply'      => "Connecting you to a live person on WhatsApp. If it doesn't open automatically, tap the button below.",
+			'whatsapp_button'     => 'Open WhatsApp',
 
 			// Floating launcher button.
-			'launcher_text'     => 'Chat With Us',
-			'launcher_style'    => 'pill', // pill | icon.
-			'launcher_icon'     => 'dot',  // dot | chat | logo | custom.
-			'launcher_icon_id'  => 0,
-			'launcher_icon_url' => '',
-			'animation'         => 'pulse',
-			'show_online_dot'   => 1,
+			'launcher_text'       => 'Chat With Us',
+			'launcher_style'      => 'pill', // pill | icon.
+			'launcher_icon'       => 'dot',  // dot | chat | logo | custom.
+			'launcher_icon_id'    => 0,
+			'launcher_icon_url'   => '',
+			'animation'           => 'pulse',
+			'show_online_dot'     => 1,
 
 			// Placement & behaviour.
-			'position'          => 'bottom-right',
-			'offset_x'          => 24,
-			'offset_y'          => 24,
-			'popup_width'       => 370,
-			'auto_open_delay'   => 0,
-			'hide_on_mobile'    => 0,
-			'z_index'           => 99999,
-			'exclude_ids'       => '',
+			'position'            => 'bottom-right',
+			'offset_x'            => 24,
+			'offset_y'            => 24,
+			'popup_width'         => 370,
+			'auto_open_delay'     => 0,
+			'hide_on_mobile'      => 0,
+			'z_index'             => 99999,
+			'exclude_ids'         => '',
 
 			// Colours.
-			'color_primary'      => '#2563eb',
-			'color_secondary'    => '#06b6d4',
-			'color_header'       => '#0b1020',
-			'color_launcher_bg'  => '#0b1020',
+			'color_primary'       => '#2563eb',
+			'color_secondary'     => '#06b6d4',
+			'color_header'        => '#0b1020',
+			'color_launcher_bg'   => '#0b1020',
 			'color_launcher_text' => '#ffffff',
-			'color_send'         => '#0b1020',
+			'color_send'          => '#0b1020',
 		);
 	}
 
 	/**
 	 * Saved settings merged over defaults.
+	 *
+	 * @return array
 	 */
 	public static function get() {
 		if ( null !== self::$settings ) {
@@ -132,6 +159,10 @@ class CNX_Settings {
 		return self::$settings;
 	}
 
+	/**
+	 * Runs on plugin activation: seeds the option, importing the legacy
+	 * "InstinctX Chatbot" settings when present.
+	 */
 	public static function activate() {
 		if ( false !== get_option( CNX_OPTION, false ) ) {
 			return;
@@ -151,9 +182,12 @@ class CNX_Settings {
 
 	/**
 	 * Logo URL (uploaded image or bundled default SVG).
+	 *
+	 * @param array|null $s Settings array, or null to use the saved settings.
+	 * @return string
 	 */
 	public static function logo_url( $s = null ) {
-		$s = $s ? $s : self::get();
+		$s   = $s ? $s : self::get();
 		$url = self::image_url( $s['logo_id'], 'medium' );
 		if ( $url ) {
 			return $url;
@@ -167,6 +201,10 @@ class CNX_Settings {
 	/**
 	 * URL of a media-library image, or '' when missing. Falls back to the full-size file
 	 * (needed for SVG / images without generated sizes).
+	 *
+	 * @param int    $id   Attachment ID.
+	 * @param string $size Registered image size.
+	 * @return string
 	 */
 	public static function image_url( $id, $size = 'medium' ) {
 		$id = (int) $id;
@@ -181,7 +219,10 @@ class CNX_Settings {
 	}
 
 	/**
-	 * https://wa.me link, or empty string when no number is configured.
+	 * WhatsApp (wa.me) link, or empty string when no number is configured.
+	 *
+	 * @param array|null $s Settings array, or null to use the saved settings.
+	 * @return string
 	 */
 	public static function whatsapp_url( $s = null ) {
 		$s = $s ? $s : self::get();
@@ -199,34 +240,83 @@ class CNX_Settings {
 		return $url;
 	}
 
-	/* ------------------------------------------------------------------
-	 * Sanitising
-	 * ---------------------------------------------------------------- */
+	// ------------------------------------------------------------------
+	// Sanitising.
+	// ------------------------------------------------------------------
 
-	private static function text( $in, $key, $default ) {
-		return isset( $in[ $key ] ) ? sanitize_text_field( $in[ $key ] ) : $default;
+	/**
+	 * Sanitises a single-line text field.
+	 *
+	 * @param array  $in       Raw input array.
+	 * @param string $key      Key to read.
+	 * @param string $fallback Value to use when the key is absent.
+	 * @return string
+	 */
+	private static function text( $in, $key, $fallback ) {
+		return isset( $in[ $key ] ) ? sanitize_text_field( $in[ $key ] ) : $fallback;
 	}
 
-	private static function area( $in, $key, $default ) {
-		return isset( $in[ $key ] ) ? sanitize_textarea_field( $in[ $key ] ) : $default;
+	/**
+	 * Sanitises a multi-line text field.
+	 *
+	 * @param array  $in       Raw input array.
+	 * @param string $key      Key to read.
+	 * @param string $fallback Value to use when the key is absent.
+	 * @return string
+	 */
+	private static function area( $in, $key, $fallback ) {
+		return isset( $in[ $key ] ) ? sanitize_textarea_field( $in[ $key ] ) : $fallback;
 	}
 
-	private static function enum( $in, $key, $allowed, $default ) {
-		return ( isset( $in[ $key ] ) && in_array( $in[ $key ], $allowed, true ) ) ? $in[ $key ] : $default;
+	/**
+	 * Reads a value and restricts it to an allow-list.
+	 *
+	 * @param array  $in       Raw input array.
+	 * @param string $key      Key to read.
+	 * @param array  $allowed  Allowed values.
+	 * @param string $fallback Value to use when the key is absent or not allowed.
+	 * @return string
+	 */
+	private static function enum( $in, $key, $allowed, $fallback ) {
+		return ( isset( $in[ $key ] ) && in_array( $in[ $key ], $allowed, true ) ) ? $in[ $key ] : $fallback;
 	}
 
-	private static function num( $in, $key, $min, $max, $default ) {
+	/**
+	 * Reads an integer and clamps it to a range.
+	 *
+	 * @param array  $in       Raw input array.
+	 * @param string $key      Key to read.
+	 * @param int    $min      Minimum allowed value.
+	 * @param int    $max      Maximum allowed value.
+	 * @param int    $fallback Value to use when the key is absent or empty.
+	 * @return int
+	 */
+	private static function num( $in, $key, $min, $max, $fallback ) {
 		if ( ! isset( $in[ $key ] ) || '' === $in[ $key ] ) {
-			return $default;
+			return $fallback;
 		}
 		return max( $min, min( $max, (int) $in[ $key ] ) );
 	}
 
-	private static function color( $in, $key, $default ) {
+	/**
+	 * Sanitises a hex colour, falling back when invalid or absent.
+	 *
+	 * @param array  $in       Raw input array.
+	 * @param string $key      Key to read.
+	 * @param string $fallback Value to use when the key is absent or invalid.
+	 * @return string
+	 */
+	private static function color( $in, $key, $fallback ) {
 		$c = isset( $in[ $key ] ) ? sanitize_hex_color( $in[ $key ] ) : '';
-		return $c ? $c : $default;
+		return $c ? $c : $fallback;
 	}
 
+	/**
+	 * Sanitises the full settings array before it is saved.
+	 *
+	 * @param array $input Raw input array, as submitted by the settings form.
+	 * @return array
+	 */
 	public static function sanitize( $input ) {
 		$d   = self::defaults();
 		$in  = is_array( $input ) ? $input : array();
@@ -277,13 +367,13 @@ class CNX_Settings {
 		$out['whatsapp_button']  = self::text( $in, 'whatsapp_button', $d['whatsapp_button'] );
 
 		// Launcher.
-		$out['launcher_text']    = self::text( $in, 'launcher_text', $d['launcher_text'] );
-		$out['launcher_style']   = self::enum( $in, 'launcher_style', array( 'pill', 'icon' ), $d['launcher_style'] );
-		$out['launcher_icon']    = self::enum( $in, 'launcher_icon', array( 'dot', 'chat', 'logo', 'custom' ), $d['launcher_icon'] );
-		$out['launcher_icon_id'] = isset( $in['launcher_icon_id'] ) ? absint( $in['launcher_icon_id'] ) : 0;
+		$out['launcher_text']     = self::text( $in, 'launcher_text', $d['launcher_text'] );
+		$out['launcher_style']    = self::enum( $in, 'launcher_style', array( 'pill', 'icon' ), $d['launcher_style'] );
+		$out['launcher_icon']     = self::enum( $in, 'launcher_icon', array( 'dot', 'chat', 'logo', 'custom' ), $d['launcher_icon'] );
+		$out['launcher_icon_id']  = isset( $in['launcher_icon_id'] ) ? absint( $in['launcher_icon_id'] ) : 0;
 		$out['launcher_icon_url'] = isset( $in['launcher_icon_url'] ) ? esc_url_raw( trim( $in['launcher_icon_url'] ) ) : '';
-		$out['animation']        = self::enum( $in, 'animation', array_keys( self::animations() ), $d['animation'] );
-		$out['show_online_dot']  = empty( $in['show_online_dot'] ) ? 0 : 1;
+		$out['animation']         = self::enum( $in, 'animation', array_keys( self::animations() ), $d['animation'] );
+		$out['show_online_dot']   = empty( $in['show_online_dot'] ) ? 0 : 1;
 
 		// Placement.
 		$out['position']        = self::enum( $in, 'position', self::positions(), $d['position'] );
@@ -294,8 +384,8 @@ class CNX_Settings {
 		$out['hide_on_mobile']  = empty( $in['hide_on_mobile'] ) ? 0 : 1;
 		$out['z_index']         = self::num( $in, 'z_index', 1, 2147483000, $d['z_index'] );
 
-		$ids = isset( $in['exclude_ids'] ) ? explode( ',', (string) $in['exclude_ids'] ) : array();
-		$ids = array_filter( array_map( 'absint', $ids ) );
+		$ids                = isset( $in['exclude_ids'] ) ? explode( ',', (string) $in['exclude_ids'] ) : array();
+		$ids                = array_filter( array_map( 'absint', $ids ) );
 		$out['exclude_ids'] = implode( ',', $ids );
 
 		// Colours.

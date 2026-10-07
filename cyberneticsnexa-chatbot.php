@@ -8,6 +8,8 @@
  * Author:            CyberneticsNexa
  * License:           GPL-2.0-or-later
  * Text Domain:       cyberneticsnexa-chatbot
+ *
+ * @package CyberneticsNexa_Chatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -1,6 +1,8 @@
 <?php
 /**
  * Settings page view.
+ *
+ * @package CyberneticsNexa_Chatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -12,12 +14,12 @@ $n = CNX_OPTION;
 
 /* ---- Small field helpers (all output is escaped) -------------------- */
 
-$text = function ( $key, $class = 'regular-text', $type = 'text', $attrs = '' ) use ( $o, $n ) {
+$text = function ( $key, $css_class = 'regular-text', $type = 'text', $attrs = '' ) use ( $o, $n ) {
 	// $attrs is only ever a hard-coded string from this file (min/max/placeholder).
 	printf(
 		'<input type="%1$s" class="%2$s" name="%3$s[%4$s]" value="%5$s" %6$s>',
 		esc_attr( $type ),
-		esc_attr( $class ),
+		esc_attr( $css_class ),
 		esc_attr( $n ),
 		esc_attr( $key ),
 		esc_attr( $o[ $key ] ),

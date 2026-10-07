@@ -1,20 +1,33 @@
 <?php
 /**
  * Frontend: enqueue assets, print CSS variables + JS config, render markup.
+ *
+ * @package CyberneticsNexa_Chatbot
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Enqueues the public assets and renders the chatbot markup in the footer.
+ */
 class CNX_Frontend {
 
+	/**
+	 * Hooks the frontend asset enqueue and markup render into WordPress.
+	 */
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ) );
 		// Priority 5 = printed BEFORE the footer scripts (priority 20), so the markup exists when chatbot.js runs.
 		add_action( 'wp_footer', array( __CLASS__, 'render' ), 5 );
 	}
 
+	/**
+	 * Whether the chatbot should be shown on the current request.
+	 *
+	 * @return bool
+	 */
 	private static function should_display() {
 		if ( is_admin() || is_feed() || is_embed() || wp_is_json_request() ) {
 			return false;
@@ -32,6 +45,12 @@ class CNX_Frontend {
 		return true;
 	}
 
+	/**
+	 * Converts a hex colour to a "r,g,b" string, for use inside an rgba() CSS value.
+	 *
+	 * @param string $hex Hex colour, with or without the leading "#".
+	 * @return string
+	 */
 	private static function hex_to_rgb( $hex ) {
 		$hex = ltrim( (string) $hex, '#' );
 		if ( 3 === strlen( $hex ) ) {
@@ -43,6 +62,10 @@ class CNX_Frontend {
 		return hexdec( substr( $hex, 0, 2 ) ) . ',' . hexdec( substr( $hex, 2, 2 ) ) . ',' . hexdec( substr( $hex, 4, 2 ) );
 	}
 
+	/**
+	 * Enqueues the public stylesheet/script and prints the per-site CSS
+	 * variables and the window.CNX_DATA config JavaScript consumes.
+	 */
 	public static function enqueue() {
 		if ( ! self::should_display() ) {
 			return;
@@ -105,10 +128,13 @@ class CNX_Frontend {
 		);
 	}
 
-	/* ------------------------------------------------------------------
-	 * Markup
-	 * ---------------------------------------------------------------- */
+	// ------------------------------------------------------------------
+	// Markup.
+	// ------------------------------------------------------------------
 
+	/**
+	 * Renders the chatbot markup into the footer.
+	 */
 	public static function render() {
 		if ( ! self::should_display() ) {
 			return;
