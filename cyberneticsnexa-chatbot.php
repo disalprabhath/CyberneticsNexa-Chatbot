@@ -3,7 +3,7 @@
  * Plugin Name:       CyberneticsNexa Chatbot
  * Description:       Floating chat assistant with quick-reply buttons, WhatsApp live-person handoff, animated launcher and full dashboard customisation.
  * Version:           1.0.1
- * Requires at least: 5.8
+ * Requires at least: 6.0
  * Requires PHP:      7.4
  * Author:            CyberneticsNexa
  * License:           GPL-2.0-or-later
