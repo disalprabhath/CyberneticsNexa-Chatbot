@@ -71,7 +71,7 @@
 	function showTyping() {
 		typingEl = document.createElement('div');
 		typingEl.className = 'cnx-msg cnx-bot cnx-typing';
-		typingEl.setAttribute('aria-label', 'Typing');
+		typingEl.setAttribute('aria-label', cfg.i18n.typing);
 		for (var i = 0; i < 3; i++) { typingEl.appendChild(document.createElement('span')); }
 		list.appendChild(typingEl);
 		toBottom();

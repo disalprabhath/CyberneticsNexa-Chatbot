@@ -95,6 +95,7 @@ class CNX_Frontend {
 			'autoOpen' => (int) $s['auto_open_delay'],
 			'i18n'     => array(
 				'opening' => __( 'Opening it for you. If nothing happens, use the button below.', 'cyberneticsnexa-chatbot' ),
+				'typing'  => __( 'Typing', 'cyberneticsnexa-chatbot' ),
 			),
 		);
 
